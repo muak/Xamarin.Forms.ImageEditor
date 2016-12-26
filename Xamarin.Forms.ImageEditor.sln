@@ -1,0 +1,29 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Forms.ImageEditor", "Xamarin.Forms.ImageEditor\Xamarin.Forms.ImageEditor.csproj", "{1C1B75E6-846D-4AC0-8F11-425C6DFC84DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Forms.ImageEditor.iOS", "Xamarin.Forms.ImageEditor.iOS\Xamarin.Forms.ImageEditor.iOS.csproj", "{7D9BACA2-0AE0-44A5-A72A-90A7BDD3B3FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Forms.ImageEditor.Droid", "Xamarin.Forms.ImageEditor.Droid\Xamarin.Forms.ImageEditor.Droid.csproj", "{F9D9C391-501F-43B7-9D53-BBE6F96152A5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C1B75E6-846D-4AC0-8F11-425C6DFC84DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C1B75E6-846D-4AC0-8F11-425C6DFC84DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C1B75E6-846D-4AC0-8F11-425C6DFC84DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C1B75E6-846D-4AC0-8F11-425C6DFC84DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D9BACA2-0AE0-44A5-A72A-90A7BDD3B3FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D9BACA2-0AE0-44A5-A72A-90A7BDD3B3FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D9BACA2-0AE0-44A5-A72A-90A7BDD3B3FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D9BACA2-0AE0-44A5-A72A-90A7BDD3B3FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9D9C391-501F-43B7-9D53-BBE6F96152A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9D9C391-501F-43B7-9D53-BBE6F96152A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9D9C391-501F-43B7-9D53-BBE6F96152A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9D9C391-501F-43B7-9D53-BBE6F96152A5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
