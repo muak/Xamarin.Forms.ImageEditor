@@ -1,5 +1,8 @@
 ﻿using System.Threading.Tasks;
+using Xamarin.Forms;
+using Xamarin.Forms.ImageEditor.Droid;
 
+[assembly: Dependency(typeof(ImageEditor))]
 namespace Xamarin.Forms.ImageEditor.Droid
 {
     public class ImageEditor : IImageEditor
