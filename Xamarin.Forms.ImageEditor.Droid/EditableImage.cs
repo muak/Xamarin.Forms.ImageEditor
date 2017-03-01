@@ -97,6 +97,7 @@ namespace Xamarin.Forms.ImageEditor.Droid
 
         public int[] ToArgbPixels()
         {
+            //ARGBの順番
             var pixels = new int[_image.Width * _image.Height];
             _image.GetPixels(pixels, 0, _image.Width, 0, 0, _image.Width, _image.Height);
             return pixels;
