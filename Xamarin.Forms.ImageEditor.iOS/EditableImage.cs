@@ -4,6 +4,7 @@ using System.Linq;
 using CoreGraphics;
 using Foundation;
 using UIKit;
+using System.IO;
 
 namespace Xamarin.Forms.ImageEditor.iOS
 {
@@ -13,6 +14,7 @@ namespace Xamarin.Forms.ImageEditor.iOS
         public int Width { get; private set; }
 
         private UIImage _image = null;
+        private bool _needToUpdateData = false;
 
         public EditableImage(byte[] bin)
         {
@@ -55,6 +57,7 @@ namespace Xamarin.Forms.ImageEditor.iOS
             newImage = null;
 
             UpdateSize();
+            _needToUpdateData = true;
 
             return this;
         }
@@ -79,8 +82,8 @@ namespace Xamarin.Forms.ImageEditor.iOS
             var radian = -degree * Math.PI / 180f;
 
             //calculate canvas size
-            var x = Width / 2f;
-            var y = Height / 2f;
+            nfloat x = Width / 2f;
+            nfloat y = Height / 2f;
 
             var points = new List<CGPoint> { new CGPoint(x, y), new CGPoint(x, -y), new CGPoint(-x, -y), new CGPoint(-x, y) };
 
@@ -97,20 +100,41 @@ namespace Xamarin.Forms.ImageEditor.iOS
             UIGraphics.BeginImageContext(canvasSize);
 
             var context = UIGraphics.GetCurrentContext();
-            context.TranslateCTM(canvasSize.Width / 2.0f, canvasSize.Height / 2.0f);
+            context.TranslateCTM(canvasSize.Width / 2f, canvasSize.Height / 2f);
             context.ScaleCTM(1.0f, -1.0f);
-            context.RotateCTM((float)radian);
-            context.DrawImage(new CGRect(-_image.Size.Width / 2, -_image.Size.Height / 2, _image.Size.Width, _image.Size.Height), _image.CGImage);
-
+            context.RotateCTM((nfloat)radian);
+            context.DrawImage(new CGRect(-_image.Size.Width / 2f, -_image.Size.Height / 2f, _image.Size.Width, _image.Size.Height), _image.CGImage);
+           
             var rotated = UIGraphics.GetImageFromCurrentImageContext();
 
             UIGraphics.EndImageContext();
 
             _image.Dispose();
             _image = rotated;
+
             rotated = null;
             points = null;
 
+            _needToUpdateData = true;
+
+            // For some reason size increase 1px when 90 degree and 270 degree 
+            var absDegree = Math.Abs(degree);
+            if ((Math.Abs(absDegree - 90f) <= float.Epsilon ||
+                    Math.Abs(absDegree - 270f) <= float.Epsilon) &&
+                (Width != (int)_image.Size.Height || Height != (int)_image.Size.Width)) {
+
+                var fixW = Height;
+                var fixH = Width;
+
+                return Crop(0, 0, fixW, fixH);
+            }
+
+            if (Math.Abs(absDegree - 180f) <= float.Epsilon && (Width != (int)_image.Size.Width || Height != (int)_image.Size.Height)) {
+                return Crop(0, 0, Width, Height);
+            }
+
+
+            UpdateSize();
             return this;
         }
 
@@ -130,24 +154,39 @@ namespace Xamarin.Forms.ImageEditor.iOS
 
         public int[] ToArgbPixels()
         {
-            using (var data = _image.CGImage.DataProvider.CopyData()) {
-                var bytesPerPixel = _image.CGImage.BitsPerPixel / 8;
-
-                var pixels = new int[Width * Height];
-                var idx = 0;
-                for (var i = 0; i < Height; i++) {
-                    for (var j = 0; j < Width; j++) {
-                        var addr = (i * Width + j) * bytesPerPixel;
-                        pixels[idx++] =
-                            (data[addr + 3] << 24) |
-                            (data[addr + 2] << 16) |
-                            (data[addr + 1] << 8) |
-                            data[addr];
-                    }
+            //DataProvider.CopyData don't update when image rotated and resized.
+            if (_needToUpdateData) {
+                using (var wkimage = new UIImage(NSData.FromArray(_image.AsPNG().ToArray()))) 
+                using (var data = wkimage.CGImage.DataProvider.CopyData()) {
+                    _needToUpdateData = false;
+                    return GetBitmapPixels(data);
                 }
-
-                return pixels;
             }
+
+            using (var data = _image.CGImage.DataProvider.CopyData()) {
+                return GetBitmapPixels(data);
+            }
+        }
+
+        int[] GetBitmapPixels(NSData data)
+        {          
+            var bytesPerPixel = _image.CGImage.BitsPerPixel / 8;
+
+            // Order by ARGB
+            var pixels = new int[Width * Height];
+            var idx = 0;
+            for (var i = 0; i < Height; i++) {
+                for (var j = 0; j < Width; j++) {
+                    var addr = (i * Width + j) * bytesPerPixel;
+                    pixels[idx++] =
+                        (data[addr + 3] << 24) |
+                        (data[addr]     << 16)|
+                        (data[addr + 1] << 8) |
+                        (data[addr + 2] );
+                }
+            }
+
+            return pixels;
         }
 
         public void Dispose()
